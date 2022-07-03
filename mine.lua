@@ -46,13 +46,32 @@ function containsOre(value)
     return false
 end
 
+function checkGravel()
+    while turtle.detect() == true do
+        success, data = turtle.inspect()
+        print(success)
+        if success then
+            if data.name == "minecraft:gravel" then
+                print("gravel")
+                turtle.dig()
+            else 
+                print("not gravel")
+                break
+            end
+        end
+    end
+     
+end
+
 function forward(value)
     
     for i = 1, value do
+        checkGravel()
         if turtle.getFuelLevel() == 0 then
             refuel()
         end
         turtle.dig()
+        checkGravel()
         turtle.forward()
     end
 end
@@ -220,4 +239,10 @@ function main(args)
 end
 
 main(args)
+--checkGravel()
+--forward(10)
 --collectOre()
+--turnLeft(2)
+--forward(100)
+--turnLeft(2)
+--forward(100)
