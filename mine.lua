@@ -255,10 +255,11 @@ function main(args)
         end
         scan()
         turtle.dig()
+        turtle.digUp()
         if loop%torchDistance == 0 then
             placeTorch()
         end
-        turtle.digUp()
+        
         forward(1)
         inventoryFilter()
         blocksTraveled = blocksTraveled + 1
