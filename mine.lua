@@ -1,10 +1,11 @@
 args = {...}
 torchDistance = 13
 returnHomeValue = args[1]
-function returnHome()
+blocksTraveled = 0
+function returnHome(value)
     turtle.turnLeft()
     turtle.turnLeft()
-    forward(returnHomeValue)
+    forward(value)
     turtle.turnLeft()
     turtle.turnLeft()
 end
@@ -37,7 +38,7 @@ function containsMinedOre(value)
 end
 
 function containsOre(value)
-    ores = {"minecraft:coal_ore","minecraft:diamond_ore","minecraft:iron_ore","minecraft:emerald_ore","minecraft:gold_ore","minecraft:redstone_ore","minecraft:lapis_ore"}
+    ores = {"minecraft:coal_ore","minecraft:diamond_ore","minecraft:iron_ore","minecraft:emerald_ore","minecraft:gold_ore","minecraft:redstone_ore","minecraft:lapis_ore","minecraft:deepslate_lapis_ore","minecraft:deepslate_diamond_ore","minecraft:deepslate_redstone_ore","minecraft:deepslate_emerald_ore","minecraft:deepslate_gold_ore","minecraft:deepslate_coal_ore","minecraft:deepslate_iron_ore"}
     for i = 1, #(ores) do
         if ores[i] == value then
            return true 
@@ -144,6 +145,7 @@ function collectOre()
         turnRight(1)
     end
     returnHomeValue = returnHomeValue + mid
+    blocksTraveled = blocksTraveled + mid
     up(mid)
     forward(mid)
     turnLeft(1)
@@ -187,16 +189,16 @@ end
 
 function findItem(item)
     
-        for i = 1, 16 do
-            turtle.select(i)
-            data = turtle.getItemDetail()
-            if data then 
-                if data.name == item then
-                    return true
-                end
+    for i = 1, 16 do
+        turtle.select(i)
+        data = turtle.getItemDetail()
+        if data then 
+            if data.name == item then
+                return true
             end
         end
-        return false
+    end
+    return false
 end
 
 function placeTorch()
@@ -215,30 +217,59 @@ function refuel()
         end
     end
     turtle.select(1)
-end        
+end  
+
+function countItems(item)
+    amount = 0
+    for i = 1, 16 do
+        turtle.select(i)
+        data = turtle.getItemDetail()
+        if data then
+            if data.name == item then
+                amount = amount + turtle.getItemCount()
+            end
+        end
+    end
+    return amount
+
+end
+
+function distanceLimit()
+    amount = countItems("minecraft:coal")
+    gas = amount * 70
+    if blocksTraveled >= gas then
+        return true
+    end
+    return false
+end
 
 function main(args)
+    
     for loop = 1, args[1],1 do
         if turtle.getFuelLevel() == 0 then
             refuel()
         end
+        if distanceLimit() == true then
+            returnHome(blocksTraveled)
+            do return end
+        end
         scan()
         turtle.dig()
-        up(1)
-        scan()
-        down(1)
         if loop%torchDistance == 0 then
             placeTorch()
         end
+        turtle.digUp()
         forward(1)
         inventoryFilter()
-        print("amount of blocks traveled: " .. loop)
+        blocksTraveled = blocksTraveled + 1
+        print("amount of blocks traveled: " .. blocksTraveled)
         print("amount of gas: " .. turtle.getFuelLevel())
     end
-    returnHome()
+    returnHome(returnHomeValue)
 end
 
 main(args)
+--print(countItems("minecraft:coal"))
 --checkGravel()
 --forward(10)
 --collectOre()
@@ -246,3 +277,4 @@ main(args)
 --forward(100)
 --turnLeft(2)
 --forward(100)
+--turnLeft(2)
