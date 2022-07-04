@@ -123,32 +123,83 @@ function minePlot(value)
 end
 
 function collectOre()
-    
-    mid = 2
-    total = mid * 2
-    
-    turnLeft(2)
-    forward(mid)
     turnRight(1)
-    forward(mid)
-    down(mid)
-    turnLeft(2)
-    
-    
-    
-    for i = 1, total do
-        print(turtle.getFuelLevel())
-        inventoryFilter()
-        minePlot(total)
-        turnLeft(1)
-        forward(1)
-        turnRight(1)
+    if detectOre() == true then
+        Right()
     end
-    returnHomeValue = returnHomeValue + mid
-    blocksTraveled = blocksTraveled + mid
-    up(mid)
-    forward(mid)
+
+    turnRight(1)
+    if detectOre() == true then
+        Back()
+    end
+
+    turnRight(1)
+    if detectOre() == true then
+        Left()
+    end
+
+    turnRight(1)
+    if detectOre() == true then
+        Straite()
+    end
+
+    if detectDown() == true then
+        Down()
+    end
+    
+    if detectUp() == true then
+        Up()
+    end
+end
+
+function Right()
+    forward(1)
     turnLeft(1)
+    collectOre()
+    
+    turnLeft(1)
+    forward(1)
+    turnRight(2)
+end
+
+function Back()
+    forward(1)
+    turnLeft(2)
+    collectOre()
+    
+    forward(1)
+    turnLeft(2)
+end
+
+function Left()
+    forward(1)
+    turnRight(1)
+    collectOre()
+
+    turnRight(1)
+    forward(1)
+    turnLeft(2)
+end
+
+function Straite()
+    forward(1)
+    collectOre()
+    
+    turnLeft(2)
+    forward(1)
+    turnLeft(2)
+end
+
+function Up()
+    up(1)
+    collectOre()
+    down(1)
+end
+
+function Down()
+    down(1)
+    collectOre()
+    up(1)
 end
 
 function detectOre()
@@ -165,6 +216,24 @@ function detectUpDown()
     if containsOre(data.name) == true then
         return true
     elseif containsOre(data1.name) then
+        return true
+    end
+    return false
+end
+
+function detectUp()
+    local success, data = turtle.inspectUp()
+    
+    if containsOre(data.name) == true then
+        return true
+    end
+    return false
+end
+
+function detectDown()
+    
+    local succes, data = turtle.inspectDown()
+    if containsOre(data.name) == true then
         return true
     end
     return false
